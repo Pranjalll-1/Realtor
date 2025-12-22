@@ -6,11 +6,13 @@ import SignUp from "./pages/SignUp";
 import ForgotPass from "./pages/ForgotPass";
 import Profile from "./pages/Profile";
 import Offers from "./pages/Offers";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
