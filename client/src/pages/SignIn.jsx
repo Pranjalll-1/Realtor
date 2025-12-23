@@ -1,7 +1,24 @@
 import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useState } from "react";
+import GoogleAuth from "../components/GoogleAuth";
 
 export default function SignIn() {
+  const [showPass, setShowPass] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = formData;
+  function onChange(e) {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.id]: e.target.value,
+    }));
+  }
+  function toggleShowPass() {
+    setShowPass((prev) => !prev);
+  }
   return (
     <section>
       {/* Heading */}
@@ -26,17 +43,32 @@ export default function SignIn() {
               type="email"
               placeholder="Email address"
               className="mb-6 w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+              id="email"
+              value={email}
+              onChange={onChange}
             />
 
             {/* Password */}
             <div className="relative mb-6">
               <input
-                type="password"
+                type={showPass ? "text" : "password"}
                 placeholder="Password"
                 className="w-full px-4 py-2 text-xl text-gray-700 bg-white border-gray-300 rounded transition ease-in-out"
+                id="password"
+                value={password}
+                onChange={onChange}
               />
-              <AiFillEye className="absolute right-3 top-3 text-xl cursor-pointer" />
-              {/* swap with AiFillEyeInvisible when wiring logic */}
+              {showPass ? (
+                <AiFillEyeInvisible
+                  className="absolute right-3 top-3 text-xl cursor-pointer"
+                  onClick={() => setShowPass(!showPass)}
+                />
+              ) : (
+                <AiFillEye
+                  className="absolute right-3 top-3 text-xl cursor-pointer"
+                  onClick={() => setShowPass(!showPass)}
+                />
+              )}
             </div>
 
             {/* Links */}
@@ -63,7 +95,7 @@ export default function SignIn() {
 
             {/* Button */}
             <button
-              className="w-full bg-blue-600 text-white px-7 py-3 text-sm font-medium uppercase rounded shadow-md hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
+              className="w-full cursor-pointer bg-blue-600 text-white px-7 py-3 text-sm font-medium uppercase rounded shadow-md hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
               type="button"
             >
               Sign in
@@ -74,10 +106,7 @@ export default function SignIn() {
               <p className="text-center font-semibold mx-4">OR</p>
             </div>
 
-            {/* OAuth Placeholder */}
-            <div className="w-full text-center py-3 border rounded cursor-pointer">
-              Continue with Google
-            </div>
+            <GoogleAuth />
           </form>
         </div>
       </div>
