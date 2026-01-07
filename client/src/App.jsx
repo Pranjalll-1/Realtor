@@ -7,6 +7,7 @@ import ForgotPass from "./pages/ForgotPass";
 import Profile from "./pages/Profile";
 import Offers from "./pages/Offers";
 import Navbar from "./components/Navbar";
+import { ToastContainer, Bounce } from "react-toastify";
 
 function App() {
   return (
@@ -22,6 +23,19 @@ function App() {
           <Route path="/offers" element={<Offers />} />
         </Routes>
       </Router>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition={Bounce}
+      />
     </>
   );
 }

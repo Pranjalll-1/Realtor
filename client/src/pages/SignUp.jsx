@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useState } from "react";
 import GoogleAuth from "../components/GoogleAuth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
   const [showPass, setShowPass] = useState(false);
@@ -10,12 +18,36 @@ export default function SignUp() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const { name, email, password } = formData;
   function onChange(e) {
     setFormData((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
+  }
+  async function onSubmit(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+      const user = userCredential.user;
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      toast.success("Sign-up was successful!");
+      navigate("/");
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   }
 
   return (
@@ -36,7 +68,7 @@ export default function SignUp() {
 
         {/* Right Form */}
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
             {/* Full Name */}
             <input
               type="text"
@@ -104,7 +136,7 @@ export default function SignUp() {
             {/* Button */}
             <button
               className="w-full cursor-pointer bg-blue-600 text-white px-7 py-3 text-sm font-medium uppercase rounded shadow-md hover:bg-blue-700 transition duration-150 ease-in-out hover:shadow-lg active:bg-blue-800"
-              type="button"
+              type="submit"
             >
               Sign up
             </button>
