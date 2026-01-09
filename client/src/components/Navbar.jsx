@@ -1,11 +1,21 @@
-import React from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const auth = getAuth();
 
   const pathMatchRoute = (route) => route === location.pathname;
+  const [pageState, setPageState] = useState("Sign in");
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setPageState("Profile");
+      }
+    });
+  }, [auth.currentUser]);
 
   return (
     <nav className="bg-white border-b shadow-sm sticky top-0 z-40">
@@ -35,7 +45,7 @@ const Navbar = () => {
           <li
             className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 
               border-b-[3px] border-b-transparent -mb-[3px] ${
-                pathMatchRoute("/offers") && "text-black border-b-red-500"
+                pathMatchRoute("/offers") && "text-black  border-b-red-500"
               }`}
             onClick={() => navigate("/offers")}
           >
@@ -45,11 +55,12 @@ const Navbar = () => {
           <li
             className={`cursor-pointer py-3 text-sm font-semibold text-gray-400 
               border-b-[3px] border-b-transparent -mb-[3px] ${
-                pathMatchRoute("/sign-in") && "text-black border-b-red-500"
+                (pathMatchRoute("/sign-in") || pathMatchRoute("/profile")) &&
+                "text-black border-b-red-500"
               }`}
-            onClick={() => navigate("/sign-in")}
+            onClick={() => navigate("/profile")}
           >
-            Sign in
+            {pageState}
           </li>
         </ul>
       </header>
