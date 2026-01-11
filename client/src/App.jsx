@@ -9,6 +9,7 @@ import Offers from "./pages/Offers";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
 import { ToastContainer, Bounce } from "react-toastify";
+import CreateListing from "./pages/CreateListing";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
           </Route>
           <Route path="/offers" element={<Offers />} />
+          <Route path="/create-listing" element={<CreateListing />} />
         </Routes>
       </Router>
       <ToastContainer
