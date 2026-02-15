@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase.js";
+import { auth, db } from "../firebase.js";
 import Spinner from "../components/Spinner.jsx";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Autoplay, Navigation, Pagination } from "swiper/modules";
@@ -17,11 +17,13 @@ import {
   FaParking,
   FaCouch,
 } from "react-icons/fa";
+import Contact from "../components/Contact.jsx";
 
 const Listing = () => {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
+  const [contactLandlord, setContactLandlord] = useState(false);
   const params = useParams();
 
   useEffect(() => {
@@ -87,7 +89,7 @@ const Listing = () => {
       )}
       <div className="flex flex-col md:flex-row max-w-6xl lg:mx-auto m-4 p-4 rounded-lg shadow-lg bg-white lg:space-x-5">
         {/* info */}
-        <div className="w-full h-[200px] lg:h-[400px]">
+        <div className="w-full h-fit">
           <p className="text-2xl font-bold mb-3 text-blue-900 ">
             {listing.name} -
             {listing.offer
@@ -113,7 +115,7 @@ const Listing = () => {
             <b>Descripiton - </b>
             <span className="text-gray-700">{listing.description}</span>
           </p>
-          <div className="mt-3 flex justify-start items-center gap-4 w-full">
+          <div className="mt-3 mb-3 flex justify-start items-center gap-4 w-full">
             <div className="flex items-center gap-2">
               <FaBed className="" />
               <p className="text-sm">
@@ -129,7 +131,7 @@ const Listing = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              {!listing.parking && (
+              {listing.parking && (
                 <>
                   <FaParking className="" />
                   <p className="text-sm">Parking Available</p>
@@ -145,6 +147,17 @@ const Listing = () => {
               )}
             </div>
           </div>
+          {listing.userRef !== auth.currentUser?.uid && !contactLandlord && (
+            <div>
+              <button
+                onClick={() => setContactLandlord(true)}
+                className="bg-blue-600 text-white px-7 py-3 font-semibold rounded-lg mt-4 mb-4 text-sm cursor-pointer hover:bg-blue-800 shadow-md hover:shadow-lg w-full text-center transition duration-150 ease-in-out"
+              >
+                Contact Landlord
+              </button>
+            </div>
+          )}
+          {contactLandlord && <Contact listing={listing} />}
         </div>
         {/* map */}
         <div className="bg-blue-300 w-full h-[200px] lg:h-[400px] z-10 overflow-x-hidden"></div>
